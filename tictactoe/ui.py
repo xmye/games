@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, QMessageBox, QSizePolicy, QVBoxLayout, \
-                            QComboBox
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QPushButton, QComboBox, QMessageBox, \
+                            QSizePolicy, QGridLayout, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import Qt, QSize, QByteArray
 from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtSvg import QSvgWidget
 
 from tictactoe import TicTacToe
 from ai import DepthFirstSearchAI
@@ -59,15 +60,25 @@ class QTicTacToe(QWidget):
 
     def initUI(self):
         self.setWindowTitle(self.tr("Tic-Tac-Toe"))
-        layout = QVBoxLayout()
-        self.setLayout(layout)
+        widgetLayout = QVBoxLayout()
+        widgetLayout.setSpacing(5)
+        aiSelectLayout = QHBoxLayout()
+        aiSelectLayout.setSpacing(5)
         gridLayout = QGridLayout()
-        gridLayout.setSpacing(3)
+        gridLayout.setSpacing(5)
+
         aiComboBox = QComboBox(self)
         aiComboBox.addItems([self.tr(ai) for ai in self.AIs])
         aiComboBox.currentTextChanged.connect(self.selectAI)
-        layout.addWidget(aiComboBox)
-        layout.addLayout(gridLayout)
+        aiVisualizationButton = QPushButton(self)
+        aiVisualizationButton.setText(self.tr(" ? "))
+        aiVisualizationButton.clicked.connect(self.visualizeAI)
+
+        aiSelectLayout.addWidget(aiComboBox)
+        aiSelectLayout.addWidget(aiVisualizationButton)
+        widgetLayout.addLayout(aiSelectLayout)
+        widgetLayout.addLayout(gridLayout)
+        self.setLayout(widgetLayout)
 
         for tile in self.ticTacToe:
             button = QTicTacToe.QTileButton(self)
@@ -94,5 +105,13 @@ class QTicTacToe(QWidget):
         self.ai = ArtificialIntelligence(self.ticTacToe, self.ai.symbol)
         self.ticTacToe.x = self.ai
 
+    def visualizeAI(self):
+        svgBytes = self.ai.visualize()
+        dialog = QDialog(self)
+        dialog.setWindowTitle("AI Algorithm Visualization")
+        svgWidget = QSvgWidget(dialog)
+        svgWidget.load(QByteArray(svgBytes))
+        dialog.show()
+
     def sizeHint(self) -> QSize:
-        return QSize(180, 220)
+        return QSize(180, 250)

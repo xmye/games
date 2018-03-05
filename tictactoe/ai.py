@@ -1,11 +1,16 @@
+import io
 import math
 import unittest
+import pygraphviz as pgv
 from typing import List, Tuple
 
 from tictactoe import TicTacToe
 
 
 class DepthFirstSearchAI(TicTacToe.Player):
+
+    def __init__(self, *args, **kwargs):
+        super(DepthFirstSearchAI, self).__init__(*args, **kwargs)
 
     def play(self) -> TicTacToe.Tile:
         def best_move(tictactoe: TicTacToe, recursion_level: int=1) -> Tuple[int, TicTacToe.Tile]:
@@ -26,6 +31,19 @@ class DepthFirstSearchAI(TicTacToe.Player):
 
         best_score, best_tile = best_move(self.tictactoe)
         return best_tile
+
+    def reset(self):
+        pass
+
+    def visualize(self) -> bytes:
+        dummy_graph = pgv.AGraph()
+        dummy_graph.add_node(['b', 'c'])
+        dummy_graph.add_node(1, color='red')
+        dummy_graph.add_edge('b', 'c', color='blue')
+
+        buffer = io.BytesIO()
+        dummy_graph.draw(buffer, format='svg', prog='dot')
+        return buffer.getvalue()
 
 
 # region Unit Tests
