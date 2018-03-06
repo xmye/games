@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QResizeEvent
 
 from tictactoe import TicTacToe
-from ai import DepthFirstSearchAI
+from ai import DepthFirstSearchAI, MonteCarloTreeSearchAI
 
 
 class QTicTacToe(QWidget):
@@ -41,7 +41,8 @@ class QTicTacToe(QWidget):
         def play(self):
             return self.tile
 
-    AIs = {"Depth First Search AI": DepthFirstSearchAI}
+    AIs = {"Depth First Search AI": DepthFirstSearchAI,
+           "Monte Carlo Tree Search AI": MonteCarloTreeSearchAI}
 
     def __init__(self):
         super(QTicTacToe, self).__init__()
